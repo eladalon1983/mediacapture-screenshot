@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <title>Screenshot API</title>
+    <script class="remove" src="screenshot.js" type="text/javascript"></script>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
+  </head>
+  <body>
+    <section id="abstract">
+      <p>
+        This document proposes a new API aimed at grabbing a screenshot of either the current tab,
+        the current window or the current screen.
+      </p>
+      <p>
+        Extending this API beyond the current tab/window/screen is possible, but we avoid it for the
+        time being. The rationale for this decision is discussed below.
+      </p>
+    </section>
+    <section id="sotd">
+      <p>This is an early draft of a proposal for an API for grabbing screenshots.</p>
+    </section>
+    <section id="conformance"></section>
+    <section id="terminology">
+      <h2>Terminology</h2>
+      <p>
+        This document uses the definitions of {{MediaStream}} and {{MediaStreamTrack}} from
+        [[!MEDIACAPTURE-STREAMS]].
+      </p>
+      <p>
+        This document uses the definitions of
+        <a data-cite="SCREEN-CAPTURE#dfn-display-surface">display surfaces</a>
+        from [[!SCREEN-CAPTURE]], including the distinction between
+        <a data-cite="SCREEN-CAPTURE#dfn-browser">browser</a>,
+        <a data-cite="SCREEN-CAPTURE#dfn-windows">window</a> and
+        <a data-cite="SCREEN-CAPTURE#dfn-monitor">monitor</a>
+        <a data-cite="SCREEN-CAPTURE#dfn-display-surface">display surfaces</a>.
+      </p>
+    </section>
+    <section id="introduction">
+      <h2>Introduction</h2>
+      <section id="goals">
+        <h3>Goals</h3>
+        <p>
+          We define a "screenshot" as an image representing what the user sees on their screen, or
+          part thereof. A screenshot is defined as a subset of the user's current
+          <a data-cite="SCREEN-CAPTURE#dfn-browser">browser</a>,
+          <a data-cite="SCREEN-CAPTURE#dfn-windows">window</a> or
+          <a data-cite="SCREEN-CAPTURE#dfn-monitor">monitor</a>
+          <a data-cite="SCREEN-CAPTURE#dfn-display-surface">display surface</a>.
+        </p>
+      </section>
+      <section id="non-goals">
+        <h3>Non-Goals</h3>
+        <p>
+          We avoid extended definitions for the time being. For the purposes of this document, the
+          following are <bold>not</bold> considered a screenshot:
+        </p>
+        <ol>
+          <li>
+            The "Capture full size screenshot" functionality in various browsers'
+            <a href="https://developer.chrome.com/docs/devtools/">Developer Console</a>
+            does not match our definition of a screenshot. We avoid this use case due to the
+            security and privacy complexities inherent in capturing more than the user is likely to
+            visually inspect against over-capture by a malicious application.
+          </li>
+          <li>
+            An image of a
+            <a data-cite="SCREEN-CAPTURE#dfn-display-surface">display surface</a>
+            other than the current one does not match our definition of a "screenshot." We avoid
+            this use case due to the API and UX complexities inherent in obtaining an image from an
+            arbitrary "foreign" source.
+          </li>
+        </ol>
+      </section>
+    </section>
+    <section id="necessity">
+      <h2>Necessity</h2>
+      <section id="sample-use-case">
+        <h3>Sample Use Case</h3>
+        <p>
+          Applications often present end users the option to file feedback. This feedback can be
+          used to report bugs about the application itself, or about its interaction with either the
+          user agent or the operating system. When reporting such defects, it is often true that a
+          picture is worth a thousand words.
+        </p>
+      </section>
+      <section id="workarounds">
+        <h3>Insufficiency of Workarounds</h3>
+        <p>
+          Current mechanisms exist for an application to grab a screenshot of itself. They all have
+          significant associated issues, necessitating the definition of a new API.
+        </p>
+        <section id="workarounds-using-get-display-media">
+          <h4>Workarounds using getDisplayMedia</h4>
+          <p>
+            Applications sometimes use
+            <a data-cite="SCREEN-CAPTURE#dom-mediadevices-getdisplaymedia">getDisplayMedia</a>, then
+            attempt to grab a single frame from the resulting video track. This workaround is
+            problematic on several accounts:
+          </p>
+          <ol>
+            <li>
+              The user is compelled to grant the application permission to grab multiple frames. If
+              the user is not careful to manually revoke that permission, the application could be
+              spying on the user for a long time after the initial permission is granted.
+            </li>
+            <li>
+              Even if the user or the application cut the capture after a single frame, the user
+              does not really know what that frame contained, as the application can quickly flash a
+              cross-origin iframe, record the frame where that iframe was visible, then immediately
+              hide/unload the iframe and terminate the capture.
+            </li>
+          </ol>
+        </section>
+        <section id="workarounds-using-dom-redrawing">
+          <h4>Workarounds using Redrawing</h4>
+          <p>
+            Some libraries exist for redrawing a part of the DOM onto a
+            <a href="https://html.spec.whatwg.org/multipage/canvas.html#the-canvas-element"
+              >Canvas</a
+            >.
+          </p>
+          <ol>
+            <li>
+              The main problem with such workarounds is that they do not work well for cross-origin
+              content, leading to a discrepancy between what the user sees on their screen, and what
+              is captured as an image.
+            </li>
+            <li>
+              Additionally, these solutions are by definition confined to producing a screenshot of
+              the <a data-cite="SCREEN-CAPTURE#dfn-browser">browser</a>
+              <a data-cite="SCREEN-CAPTURE#dfn-display-surface">display surface</a>, whereas an
+              ideal screenshot-producing solution would allow grabbing an image of the
+              <a data-cite="SCREEN-CAPTURE#dfn-windows">window</a> or
+              <a data-cite="SCREEN-CAPTURE#dfn-monitor">monitor</a>.
+            </li>
+          </ol>
+        </section>
+        <section id="workarounds-using-extensions">
+          <h4>Workarounds using Extensions</h4>
+          <p>
+            Various browser extensions exist aiming to fill in the gap in the web platform. Reliance
+            on extensions suffers from several issues:
+          </p>
+          <ol>
+            <li>
+              Most importantly, the various well-known privacy and security issues associated with
+              compelling the user to install third-party software.
+            </li>
+            <li>
+              Awkward user flow requiring the installation of what essentially amounts to
+              third-party software.
+            </li>
+            <li>Specificity to a user agent.</li>
+          </ol>
+        </section>
+        <section id="workarounds-using-manual-upload">
+          <h4>Workarounds using Manual Screenshot Upload</h4>
+          <p>
+            It is possible to direct the user to take a screenshot manually, using whatever tools
+            are available on the user's operating system, and then ask the user to hand the
+            application that file.
+          </p>
+          <ol>
+            <li>
+              This creates a very awkward user journey, and requires that the user would either
+              already know how to take a screenshot, or that the user be instructed how do to so on
+              their specific operating system. On many popular modern operating system, the keyboard
+              shortcuts required are elaborated, excluding less tech-savvy users.
+            </li>
+            <li>
+              The user's choice is limited to grabbing a screenshot of the entire screen or of a
+              window; the ability to take a screenshot of just the web-application is missing.
+            </li>
+          </ol>
+        </section>
+        <section id="workarounds-using-dev-tools">
+          <h4>Workarounds using Developer Tools</h4>
+          <p>
+            Most modern browsers include a Developer Tools module which includes the ability to grab
+            a screenshot. An application can direct the user to use one of these and to then share
+            with the application the resulting image.
+          </p>
+          <p>
+            It should go without saying that this workaround is <bold>highly perilous</bold> for the
+            user, as directions to use the Developer Tools module could easily lead to the user
+            being asked to help the application exceed the permissions which it should have.
+          </p>
+          <p>
+            Reputable applications would never direct the user to make use of the Developer Tools
+            module. Tech-savvy users would find such instruction highly suspect, whereas unsavvy
+            users would often find the instruction difficult to follow.
+          </p>
+        </section>
+      </section>
+      <section id="workaround-conclusions">
+        <h2>Workarounds - Conclusion</h2>
+        <p>
+          No good workaround exists, yet the capability is highly desired on the web, as evidenced
+          by the many high-profile applications which provide this functionality using complicated
+          workarounds involving cross-origin communication and stitching with the help of remote
+          servers.
+        </p>
+      </section>
+    </section>
+  </body>
+</html>

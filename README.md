@@ -1,0 +1,3 @@
+# mediacapture-screenshot
+This is a proposal for an API which would allow grabbing a screenshot.
+It is still a WIP draft for a proposal...
