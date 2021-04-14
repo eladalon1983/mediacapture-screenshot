@@ -9,12 +9,12 @@
   <body>
     <section id="abstract">
       <p>
-        This document proposes a new API aimed at grabbing a screenshot of either the current tab,
-        the current window or the current screen.
+        This document proposes a new API aimed at grabbing a screenshot of either the current
+        viewport, the current window or the current screen.
       </p>
       <p>
-        Extending this API beyond the current tab/window/screen is possible, but we avoid it for the
-        time being. The rationale for this decision is discussed further below.
+        Extending this API beyond the current viewport/window/screen is possible, but we avoid it
+        for the time being. The rationale for this decision is discussed further below.
       </p>
     </section>
     <section id="sotd">
@@ -35,6 +35,12 @@
         <a data-cite="SCREEN-CAPTURE#dfn-windows">window</a> and
         <a data-cite="SCREEN-CAPTURE#dfn-monitor">monitor</a>
         <a data-cite="SCREEN-CAPTURE#dfn-display-surface">display surfaces</a>.
+      </p>
+      <p>
+        The terms <dfn data-lt="fulfill|fulfillment">fulfilled</dfn>,
+        <dfn data-lt="reject|rejection|rejecting">rejected</dfn> and
+        <dfn data-lt="resolve">resolved</dfn> used in the context of Promises are defined in
+        [[ECMA-262]].
       </p>
     </section>
     <section id="introduction">
@@ -205,5 +211,136 @@
         </p>
       </section>
     </section>
+    <section id="api">
+      <h2>API</h2>
+      <section id="capture-screenshot">
+        <h3><dfn>captureScreenshot</dfn></h3>
+        <p>TODO: Fix ReSpec linking of [[!MEDIACAPTURE-STREAMS]].</p>
+        <pre class="idl">
+          partial interface MediaDevices {
+            Promise&lt;CaptureScreenshotResultType&gt; captureScreenshot(ScreenshotSurfaceType surface);
+          };
+        </pre>
+        <dl data-link-for="MediaDevices" data-dfn-for="MediaDevices" class="methods">
+          <dt>
+            <dfn>captureScreenshot</dfn>
+          </dt>
+          <dd>
+            <p>
+              Prompts the user for permission to grab a screenshot of either the
+              <var>surface</var> or any [=surface-size|contained=]
+              <a href="#screenshot-surface-type">type</a>.
+            </p>
+          </dd>
+        </dl>
+      </section>
+      <section id="screenshot-surface-type">
+        <h3><dfn>ScreenshotSurfaceType</dfn></h3>
+        <p>
+          Describes the different surfaces which can be captured as a screenshot. As input to
+          {{CaptureScreenshot}}, it is used to describe which surface the application is interested
+          in capturing. When returned by {{CaptureScreenshot}}, it describes which surface the user
+          approved of capturing.
+        </p>
+        <p>
+          Note that a type for a <a data-cite="SCREEN-CAPTURE#dfn-monitor">monitor</a>
+          <a data-cite="SCREEN-CAPTURE#dfn-display-surface">display surfaces</a> is not currently
+          defined. This is intentional. It avoids, for now, the complicated topic of calling
+          {{CaptureScreenshot}} from a document presented in a window that spans multiple monitors.
+        </p>
+        <pre class="idl">
+          enum ScreenshotSurfaceType {
+            "viewport",
+            "window",
+          };
+        </pre>
+        <table data-dfn-for="ScreenshotSurfaceType" class="simple">
+          <tbody>
+            <tr>
+              <th colspan="2">Enumeration description</th>
+            </tr>
+            <tr>
+              <td>
+                <dfn id="idl-def-ScreenshotSurfaceType.viewport">viewport</dfn>
+              </td>
+              <td>
+                The viewport associated with the document from which {{captureScreenshot}} was
+                called. Note that this means that an embedded document captures its parent document
+                as well as sibling documents.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <dfn id="idl-def-ScreenshotSurfaceType.window">window</dfn>
+              </td>
+              <td>
+                The window displaying the document from which {{captureScreenshot}} was called.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          With respect to <dfn>surface-size</dfn>, note that each surface in this enum is contained
+          within the next one.
+        </p>
+        <ul>
+          <li>
+            The viewport associated with the document is contained within the user agent window.
+          </li>
+          <li>
+            If we later add the ability to capture a monitor, then the window will be at least
+            partially contained within that monitor.
+          </li>
+        </ul>
+        <p>
+          We therefore define the size of a surface as increasing according to the order of elements
+          in the enum.
+        </p>
+      </section>
+      <section id="capture-screenshot-result-type">
+        <h3><dfn>CaptureScreenshotResultType</dfn></h3>
+        <p>
+          Successful inovcation of {{captureScreenshot}}, where the user approves a capture, produce
+          a result of type {{CaptureScreenshotResultType}}.
+        </p>
+        <p>TODO: Fix ReSpec linking of [[!HTML]].</p>
+        <pre class="idl">
+          [Exposed=Window] <!-- TODO: Re-examine this exposure. -->
+          interface CaptureScreenshotResultType {
+            attribute ScreenshotSurfaceType surface;
+            attribute ImageBitmap image;
+          };
+        </pre>
+        <dl
+          data-link-for="CaptureScreenshotResultType"
+          data-dfn-for="CaptureScreenshotResultType"
+          class="simple"
+        >
+          <dt>
+            <dfn>surface</dfn>
+          </dt>
+          <dd>
+            <p>
+              The surface which the user approved to capture. This may be a lesser surface than
+              requested by the application.
+            </p>
+          </dd>
+          <dt>
+            <dfn>image</dfn>
+          </dt>
+          <dd>
+            <p>
+              The screenshot, after applying any editing that the user might have chosen to peform,
+              such as cropping and/or blacking-out of parts of the image.
+            </p>
+          </dd>
+        </dl>
+      </section>
+    </section>
+    <!-- TODO:
+    Some topics yet uncovered:
+      1. Return type.
+      2. Permissions up and down the DOM.
+    -->
   </body>
 </html>
