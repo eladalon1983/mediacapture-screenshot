@@ -14,7 +14,7 @@
       </p>
       <p>
         Extending this API beyond the current tab/window/screen is possible, but we avoid it for the
-        time being. The rationale for this decision is discussed below.
+        time being. The rationale for this decision is discussed further below.
       </p>
     </section>
     <section id="sotd">
@@ -75,7 +75,7 @@
       </section>
     </section>
     <section id="necessity">
-      <h2>Necessity</h2>
+      <h2>Necessity of this API</h2>
       <section id="sample-use-case">
         <h3>Sample Use Case</h3>
         <p>
@@ -129,7 +129,8 @@
             </li>
             <li>
               Additionally, these solutions are by definition confined to producing a screenshot of
-              the <a data-cite="SCREEN-CAPTURE#dfn-browser">browser</a>
+              the
+              <a data-cite="SCREEN-CAPTURE#dfn-browser">browser</a>
               <a data-cite="SCREEN-CAPTURE#dfn-display-surface">display surface</a>, whereas an
               ideal screenshot-producing solution would allow grabbing an image of the
               <a data-cite="SCREEN-CAPTURE#dfn-windows">window</a> or
@@ -183,9 +184,10 @@
             with the application the resulting image.
           </p>
           <p>
-            It should go without saying that this workaround is <bold>highly perilous</bold> for the
-            user, as directions to use the Developer Tools module could easily lead to the user
-            being asked to help the application exceed the permissions which it should have.
+            It should go without saying that this workaround is
+            <bold>highly perilous</bold> for the user, as directions to use the Developer Tools
+            module could easily lead to the user being asked to help the application exceed the
+            permissions which it should have.
           </p>
           <p>
             Reputable applications would never direct the user to make use of the Developer Tools
@@ -195,12 +197,11 @@
         </section>
       </section>
       <section id="workaround-conclusions">
-        <h2>Workarounds - Conclusion</h2>
+        <h2>Conclusion</h2>
         <p>
           No good workaround exists, yet the capability is highly desired on the web, as evidenced
           by the many high-profile applications which provide this functionality using complicated
-          workarounds involving cross-origin communication and stitching with the help of remote
-          servers.
+          workarounds. An API for accomplishing this is necessary.
         </p>
       </section>
     </section>
