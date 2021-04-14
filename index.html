@@ -215,7 +215,10 @@
       <h2>API</h2>
       <section id="capture-screenshot">
         <h3><dfn>captureScreenshot</dfn></h3>
-        <p>TODO: Fix ReSpec linking of [[!MEDIACAPTURE-STREAMS]].</p>
+        <p>
+          TODO: Fix ReSpec linking of [[!MEDIACAPTURE-STREAMS]], [[!HTML]], [[!PERMISSIONS-POLICY]],
+          [[!PERMISSIONS]].
+        </p>
         <pre class="idl">
           partial interface MediaDevices {
             Promise&lt;CaptureScreenshotResultType&gt; captureScreenshot(ScreenshotSurfaceType surface);
@@ -229,7 +232,74 @@
             <p>
               Prompts the user for permission to grab a screenshot of either the
               <var>surface</var> or any [=surface-size|contained=]
-              <a href="#screenshot-surface-type">type</a>.
+              <a href="#screenshot-surface-type">type</a>. The screenshot is presented to the user
+              for approval and editing before it's handed to the application.
+            </p>
+            <p>
+              When the {{captureScreenshot()}} method is invoked, the User Agent MUST run the
+              following steps before proceeding:
+            </p>
+            <ol>
+              <li>
+                If the [=relevant global object=] of [=this=] does not have [=transient
+                activation=], the user agent MUST return a promise <a>rejected</a>
+                with a {{DOMException}} object whose {{DOMException/name}} attribute has the value
+                {{InvalidStateError}}.
+              </li>
+              <li>
+                If the <a>current settings object</a>'s [=environment settings object/responsible
+                document=] is NOT [=Document/fully active=], the user agent MUST return a promise
+                [=rejected=] with a {{DOMException}} object whose {{DOMException/name}} attribute
+                has the value {{InvalidStateError}}.
+              </li>
+              <li>
+                <!-- TODO: Some confusion between two meanings of "permissions" possible here; check. -->
+                If {{captureScreenshot()}} was called a document other than the top-level document,
+                and the <code>screenshot</code> {{PermissionsPolicy}} was not
+                {{PermissionState/"granted"}} to the current document, the user agent MUST return a
+                promise [=rejected=] with a {{DOMException}} object whose {{DOMException/name}}
+                attribute has the value {{NotAllowedError}}.
+              </li>
+              <li>
+                The user agent SHOULD inspect the DOM and return a [=rejected=] promise if it
+                suspicious behavior is detected, such as:
+                <ul>
+                  <li>
+                    An overlaid cross-origin iframe at an opacity that's likely to escape the user's
+                    notice.
+                  </li>
+                  <li>
+                    An overlaid cross-origin iframe displayed inside the viewport using a suspicious
+                    size in a way that the user agent suspected might be intended to escape the
+                    user's notice.
+                  </li>
+                </ul>
+              </li>
+              <li>
+                The user agent MAY compared the document's URL against a list of suspicious sites
+                and return a [=rejected=] promise if it believes the likelihood of trickery is high.
+                The user agent MAY also degrade <var>surface</var> based on the same criteria, or
+                let the URL otherwise influence its sensitivity when evaluating suspicious behavior
+                in any of the previous steps.
+              </li>
+            </ol>
+            <p>
+              If all of these validations pass, the user agent MUST then present the user with a
+              prompt containing a preview of the screenshot. If <var>surface</var> was anything
+              [=surface-size|larger=] than {{ScreenshotSurfaceType/viewport}}, the user agent
+              nevertheless MUST offer all [=surface-size|smaller=] surfaces as well, so as to
+              prevent the user being compelled into sharing more than they would like.
+            </p>
+            <p>
+              This preview MUST be large enough for the user to be able to inspect it reasonably. It
+              is recommended that the user agent provide a mechanism to zoom in or magnify the
+              preview.
+            </p>
+            <p>
+              The user agent SHOULD provide the user with mechanisms to crop the image or black out
+              parts of it. Although the application is better positioned to perform such image
+              manipulation than the user agent, the rationale here is that the user should be able
+              to reduce the amount of information shared with an application to begin with.
             </p>
           </dd>
         </dl>
@@ -281,27 +351,25 @@
         </table>
         <p>
           With respect to <dfn>surface-size</dfn>, note that each surface in this enum is contained
-          within the next one.
+          within the next one, allowing us to define "larger" surfaces as those that appear later in
+          this enum.
         </p>
         <ul>
           <li>
-            The viewport associated with the document is contained within the user agent window.
+            The {{ScreenshotSurfaceType/viewport}} associated with the document is contained within
+            the user agent {{ScreenshotSurfaceType/window}}.
           </li>
           <li>
-            If we later add the ability to capture a monitor, then the window will be at least
-            partially contained within that monitor.
+            If we later add the ability to capture a <bold>monitor</bold>,
+            {{ScreenshotSurfaceType/window}} will be at least partially contained within it.
           </li>
         </ul>
-        <p>
-          We therefore define the size of a surface as increasing according to the order of elements
-          in the enum.
-        </p>
       </section>
       <section id="capture-screenshot-result-type">
         <h3><dfn>CaptureScreenshotResultType</dfn></h3>
         <p>
-          Successful inovcation of {{captureScreenshot}}, where the user approves a capture, produce
-          a result of type {{CaptureScreenshotResultType}}.
+          Successful invocations of {{captureScreenshot}}, where the user approves a capture,
+          produce a result of type {{CaptureScreenshotResultType}}.
         </p>
         <p>TODO: Fix ReSpec linking of [[!HTML]].</p>
         <pre class="idl">
@@ -339,8 +407,7 @@
     </section>
     <!-- TODO:
     Some topics yet uncovered:
-      1. Return type.
-      2. Permissions up and down the DOM.
+      * Permissions
     -->
   </body>
 </html>
