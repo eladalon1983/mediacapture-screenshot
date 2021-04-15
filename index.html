@@ -242,22 +242,22 @@
             <ol>
               <li>
                 If the [=relevant global object=] of [=this=] does not have [=transient
-                activation=], the user agent MUST return a promise <a>rejected</a>
-                with a {{DOMException}} object whose {{DOMException/name}} attribute has the value
+                activation=], the user agent MUST return a [=rejected=] promise with a
+                {{DOMException}} object whose {{DOMException/name}} attribute has the value
                 {{InvalidStateError}}.
               </li>
               <li>
                 If the <a>current settings object</a>'s [=environment settings object/responsible
-                document=] is NOT [=Document/fully active=], the user agent MUST return a promise
-                [=rejected=] with a {{DOMException}} object whose {{DOMException/name}} attribute
-                has the value {{InvalidStateError}}.
+                document=] is NOT [=Document/fully active=], the user agent MUST return a
+                [=rejected=] promise with a {{DOMException}} object whose {{DOMException/name}}
+                attribute has the value {{InvalidStateError}}.
               </li>
               <li>
                 <!-- TODO: Some confusion between two meanings of "permissions" possible here; check. -->
                 If {{captureScreenshot()}} was called a document other than the top-level document,
                 and the <code>screenshot</code> {{PermissionsPolicy}} was not
                 {{PermissionState/"granted"}} to the current document, the user agent MUST return a
-                promise [=rejected=] with a {{DOMException}} object whose {{DOMException/name}}
+                [=rejected=] promise with a {{DOMException}} object whose {{DOMException/name}}
                 attribute has the value {{NotAllowedError}}.
               </li>
               <li>
@@ -284,11 +284,12 @@
               </li>
             </ol>
             <p>
-              If all of these validations pass, the user agent MUST then present the user with a
-              prompt containing a preview of the screenshot. If <var>surface</var> was anything
-              [=surface-size|larger=] than {{ScreenshotSurfaceType/viewport}}, the user agent
-              nevertheless MUST offer all [=surface-size|smaller=] surfaces as well, so as to
-              prevent the user being compelled into sharing more than they would like.
+              If all of these validations pass, the user agent MUST then return promise
+              <code>p</code> to the application, and present the user with a prompt containing a
+              preview of the screenshot. If <var>surface</var> was anything [=surface-size|larger=]
+              than {{ScreenshotSurfaceType/viewport}}, the user agent nevertheless MUST offer all
+              [=surface-size|smaller=] surfaces as well, so as to prevent the user being compelled
+              into sharing more than they would like.
             </p>
             <p>
               This preview MUST be large enough for the user to be able to inspect it reasonably. It
@@ -308,6 +309,17 @@
               time that the preview is presented to the user, thereby escaping the user's notice and
               gaining their approval of the screenshot based on the content they saw before the
               preview was presented.
+            </p>
+            <p>
+              If the user does not approve the screenshot, the user agent MUST [=reject=]
+              <code>p</code> with a {{DOMException}} object whose {{DOMException/name}} attribute
+              has the value {{AbortError}}.
+            </p>
+            <p>
+              If the user approves the screenshot, the user agent MUST resolve <code>p</code> with a
+              {{CaptureScreenshotResultType}} constructed with the
+              {{CaptureScreenshotResultType/surface}} the user ultimately chose and the
+              {{CaptureScreenshotResultType/image}} resulting from the user's cropping and otherwise editing of the initial screenshot.
             </p>
           </dd>
         </dl>
@@ -413,9 +425,5 @@
         </dl>
       </section>
     </section>
-    <!-- TODO:
-    Some topics yet uncovered:
-      * Permissions
-    -->
   </body>
 </html>
