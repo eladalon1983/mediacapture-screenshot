@@ -10,7 +10,7 @@
     <section id="abstract">
       <p>
         This document proposes a new API aimed at grabbing a screenshot of either the current
-        viewport, the current window or the current screen.
+        <a href="#extended-viewport-def">viewport</a>, the current window or the current screen.
       </p>
       <p>
         Extending this API beyond the current viewport/window/screen is possible, but we avoid it
@@ -23,25 +23,37 @@
     <section id="conformance"></section>
     <section id="terminology">
       <h2>Terminology</h2>
-      <p>
-        This document uses the definitions of {{MediaStream}} and {{MediaStreamTrack}} from
-        [[!MEDIACAPTURE-STREAMS]].
-      </p>
-      <p>
-        This document uses the definitions of
-        <a data-cite="SCREEN-CAPTURE#dfn-display-surface">display surfaces</a>
-        from [[!SCREEN-CAPTURE]], including the distinction between
-        <a data-cite="SCREEN-CAPTURE#dfn-browser">browser</a>,
-        <a data-cite="SCREEN-CAPTURE#dfn-windows">window</a> and
-        <a data-cite="SCREEN-CAPTURE#dfn-monitor">monitor</a>
-        <a data-cite="SCREEN-CAPTURE#dfn-display-surface">display surfaces</a>.
-      </p>
-      <p>
-        The terms <dfn data-lt="fulfill|fulfillment">fulfilled</dfn>,
-        <dfn data-lt="reject|rejection|rejecting">rejected</dfn> and
-        <dfn data-lt="resolve">resolved</dfn> used in the context of Promises are defined in
-        [[ECMA-262]].
-      </p>
+      <section>
+        <h3>Definitions for This Document</h3>
+        <p id="extended-viewport-def">
+          For the purposes of this document, when the viewport is discussed, we mean the
+          <a href="https://drafts.csswg.org/css2/#viewport">viewport</a>
+          of the <bold>top-level document</bold>; essentially the entire user-visible part of the
+          user agent tab.
+        </p>
+      </section>
+      <section>
+        <h3>Definitions from Other Documents</h3>
+        <p>
+          This document uses the definitions of {{MediaStream}} and {{MediaStreamTrack}} from
+          [[!MEDIACAPTURE-STREAMS]].
+        </p>
+        <p>
+          This document uses the definitions of
+          <a data-cite="SCREEN-CAPTURE#dfn-display-surface">display surfaces</a>
+          from [[!SCREEN-CAPTURE]], including the distinction between
+          <a data-cite="SCREEN-CAPTURE#dfn-browser">browser</a>,
+          <a data-cite="SCREEN-CAPTURE#dfn-windows">window</a> and
+          <a data-cite="SCREEN-CAPTURE#dfn-monitor">monitor</a>
+          <a data-cite="SCREEN-CAPTURE#dfn-display-surface">display surfaces</a>.
+        </p>
+        <p>
+          The terms <dfn data-lt="fulfill|fulfillment">fulfilled</dfn>,
+          <dfn data-lt="reject|rejection|rejecting">rejected</dfn> and
+          <dfn data-lt="resolve">resolved</dfn> used in the context of Promises are defined in
+          [[ECMA-262]].
+        </p>
+      </section>
     </section>
     <section id="introduction">
       <h2>Introduction</h2>
