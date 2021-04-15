@@ -227,10 +227,6 @@
       <h2>API</h2>
       <section id="capture-screenshot">
         <h3><dfn>captureScreenshot</dfn></h3>
-        <p>
-          TODO: Fix ReSpec linking of [[!MEDIACAPTURE-STREAMS]], [[!HTML]], [[!PERMISSIONS-POLICY]],
-          [[!PERMISSIONS]].
-        </p>
         <pre class="idl">
           partial interface MediaDevices {
             Promise&lt;CaptureScreenshotResultType&gt; captureScreenshot(ScreenshotSurfaceType surface);
@@ -405,7 +401,6 @@
           Successful invocations of {{captureScreenshot}}, where the user approves a capture,
           produce a result of type {{CaptureScreenshotResultType}}.
         </p>
-        <p>TODO: Fix ReSpec linking of [[!HTML]].</p>
         <pre class="idl">
           [Exposed=Window] <!-- TODO: Re-examine this exposure. -->
           interface CaptureScreenshotResultType {
@@ -440,7 +435,6 @@
       </section>
       <section>
         <h3>Screenshot Permissions Policy</h3>
-        <p>TODO: Fix ReSpec import of [[!PERMISSIONS-POLICY]].</p>
         <p>
           This document defines a [=policy-controlled feature=] identified by the string
           <dfn data-lt="screenshot-policy">"screenshot"</dfn>. Its [=default allowlist=] is

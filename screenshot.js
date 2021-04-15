@@ -11,7 +11,7 @@ var respecConfig = {
       company: "Google",
     },
   ],
-  xref: ["mediacapture-screenshot"],
+  xref: ["mediacapture-mediacapture-streams", "html", "permissions-policy", "permissions", "mediacapture-streams"],
   shortName: "mediacapture-screenshot",
   subjectPrefix: "[mediacapture-screenshot]",
 };
