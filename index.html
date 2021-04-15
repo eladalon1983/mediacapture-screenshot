@@ -253,10 +253,8 @@
                 attribute has the value {{InvalidStateError}}.
               </li>
               <li>
-                <!-- TODO: Some confusion between two meanings of "permissions" possible here; check. -->
-                If {{captureScreenshot()}} was called a document other than the top-level document,
-                and the <code>screenshot</code> {{PermissionsPolicy}} was not
-                {{PermissionState/"granted"}} to the current document, the user agent MUST return a
+                If {{captureScreenshot()}} is called from a document lacking the
+                [=screenshot-policy|screenshot=] {{PermissionsPolicy}}, the user agent MUST return a
                 [=rejected=] promise with a {{DOMException}} object whose {{DOMException/name}}
                 attribute has the value {{NotAllowedError}}.
               </li>
@@ -319,7 +317,8 @@
               If the user approves the screenshot, the user agent MUST resolve <code>p</code> with a
               {{CaptureScreenshotResultType}} constructed with the
               {{CaptureScreenshotResultType/surface}} the user ultimately chose and the
-              {{CaptureScreenshotResultType/image}} resulting from the user's cropping and otherwise editing of the initial screenshot.
+              {{CaptureScreenshotResultType/image}} resulting from the user's cropping and otherwise
+              editing of the initial screenshot.
             </p>
           </dd>
         </dl>
@@ -423,6 +422,15 @@
             </p>
           </dd>
         </dl>
+      </section>
+      <section>
+        <h3>Screenshot Permissions Policy</h3>
+        <p>TODO: Fix ReSpec import of [[!PERMISSIONS-POLICY]].</p>
+        <p>
+          This document defines a [=policy-controlled feature=] identified by the string
+          <dfn data-lt="screenshot-policy">"screenshot"</dfn>. Its [=default allowlist=] is
+          <code>"self"</code>.
+        </p>
       </section>
     </section>
   </body>
