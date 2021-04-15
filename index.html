@@ -301,6 +301,14 @@
               manipulation than the user agent, the rationale here is that the user should be able
               to reduce the amount of information shared with an application to begin with.
             </p>
+            <p>
+              The user agent SHOULD add a random delay between when {{captureScreenshot()}} is
+              called and when the screenshot is taken and presented to the user. This makes it
+              harder for a malicious application to flash new content to the screen exactly at the
+              time that the preview is presented to the user, thereby escaping the user's notice and
+              gaining their approval of the screenshot based on the content they saw before the
+              preview was presented.
+            </p>
           </dd>
         </dl>
       </section>
