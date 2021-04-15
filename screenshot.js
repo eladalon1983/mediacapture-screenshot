@@ -8,7 +8,7 @@ var respecConfig = {
     {
       name: "Elad Alon",
       email: "eladalon@google.com",
-      company: "Google Inc.",
+      company: "Google",
     },
   ],
   xref: ["mediacapture-screenshot"],
