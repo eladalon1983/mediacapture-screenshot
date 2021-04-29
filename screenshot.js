@@ -2,7 +2,7 @@ var respecConfig = {
   group: "webrtc",
   github: {
     repoURL: "https://github.com/eladalon1983/mediacapture-screenshot/",
-    branch: "master",
+    branch: "main",
   },
   editors: [
     {
